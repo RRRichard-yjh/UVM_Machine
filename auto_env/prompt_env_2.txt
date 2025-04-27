@@ -1,0 +1,64 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+**UVM Environment Generation Specification**
+
+1. **File Overview**:
+   - This file constitutes a UVM testbench component
+   - Class name: `{modulename}_env` (derived from `moduleName` in module_info.json)
+   - Must extend `uvm_env` and register with `uvm_component_utils`
+
+2. **Required Components**:
+   - Mandatory components:
+     - `{modulename}_agent`
+     - `{modulename}_scoreboard` 
+     - `{modulename}_subscriber`
+     - `{modulename}_if`
+     - `{modulename}_ref_model`
+   - Optional component:
+     - `{modulename}_reg_model` (if provided)
+
+3. **Configuration Parameters**:
+   - Agent mode configuration:
+     - Determine `ACTIVE`/`PASSIVE` mode based on `{modulename}_agent` instance count
+   - Coverage configuration:
+     - Set coverage switch based on `{modulename}_subscriber` existence
+   - Register model configuration:
+     - Configure register model switch if `{modulename}_reg_model` exists
+
+4. **Component Declaration**:
+   - Declare components as:
+     - `{modulename}_agent` -> `agent`
+     - `{modulename}_scoreboard` -> `scb`
+     - `{modulename}_subscriber` -> `cov`
+     - `{modulename}_ref_model` -> `ref_model`
+
+5. **Build Phase Implementation**:
+   - Virtual interface handling:
+     - Use `uvm_config_db` to pass `virtual {modulename}_if`
+     - Verify interface retrieval with `get()` method (report `uvm_fatal` if failed)
+     - Propagate interface to agent using `set()`
+   - Component instantiation:
+     - Create instances using `type_id::create` for:
+       - Mandatory: `agent`, `scb`, `cov`, `ref_model`
+       - Optional: `reg_model` (if exists)
+
+6. **Connect Phase Implementation**:
+   - Establish analysis connections:
+     - `agent.ap` -> `ref_model.input_imp` (verify exact port names)
+     - `ref_model.output_ap` -> `scb.expected_imp` (verify exact port names) 
+     - `agent.ap` -> `scb.actual_imp` (verify exact port names)
+     - `agent.ap` -> `cov.imp` (verify exact port names)
+
+7. **Code Quality Requirements**:
+   - Include comprehensive comments for key configuration points
+   - Strict compliance with UVM 1.2 standards
+   - Guarantee syntax error-free implementation
+   - Do not include code such as include "_agent.sv", include "_scoreboard.sv", or `include "_subscriber.sv".
+
+**Special Notes**:
+- All `{modulename}` placeholders must be replaced with case-sensitive DUT name
+- Comment out all register model related code if `reg_model` is not provided
+- Verify exact port names in respective component files for proper connection
+- Maintain proper UVM phasing throughout implementation
+
+

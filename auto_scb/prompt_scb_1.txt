@@ -1,0 +1,61 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### {modulename}_scoreboard.sv Generation Specifications
+
+The scoreboard implementation shall be developed based on the following files:
+- {module_name}_monitor.sv
+- {module_name}_reference_model.sv  
+- {module_name}_scb_example.sv (framework template)
+
+#### 1. Input File Descriptions
+- **{module_name}_monitor.sv**:
+  - Captures actual DUT inputs and outputs from interfaces
+  - Stores collected data as act_item within the component
+
+- **{module_name}_reference_model.sv**:
+  - Reference model for DUT functional verification
+  - Provides golden reference outputs
+
+- **{module_name}_scb_example.sv**:
+  - Contains base scoreboard architecture including:
+    * Signal declarations and instantiations
+    * Interface connections  
+    * Reporting mechanisms
+  - Requires run_phase implementation completion
+
+#### 2. Core Architecture Requirements
+- Utilize analysis_fifo to receive DUT I/O transactions from monitor
+- Process reference model operations:
+  * When handshake signals (e.g., valid and ready) Feed actual inputs through reference model interface
+  * Execute necessary tasks or data transformations (endian conversion, etc.) to generate expected outputs
+- Implement detailed output comparison mechanism:
+  * Before performing the comparison, first check whether the actual output signal is in the X state. If it is in the X state, skip this comparison directly without generating any print messages.
+  * When handshake signals (e.g., valid and ready) are present, perform the comparison only when these signals are at their active values. If not at their active values, skip the comparison directly without generating any print messages.
+  * Successful matches: Log uvm_info and increment pass_num
+  * Mismatches: Log uvm_error with comprehensive debug information and increment fail_num
+- Include complete statistical reporting (pass/fail rates, total counts, etc.)
+
+#### 3. Signal Specifications
+- **{module_name}_monitor.sv**:
+  - Contains complete transaction data with all I/O fields
+
+- **{module_name}_reference_model.sv**:
+  - Maintains reference model I/O signals (synchronized with monitor)
+
+#### 4. Special Requirements
+- Only compare the output signals, avoid using the 'compare' function
+- Implement field-by-field comparison with exact mismatch identification 
+- Error reports must include sufficient contextual information for debugging, encompassing all input and output data
+- Support configurable parameters for:
+  * Scoreboard enable/disable control
+  * Debug information verbosity
+- Provide virtual methods for critical functions to enable overriding
+- Incorporate robust protection mechanisms for random testing
+
+#### 5. Output Format Requirements
+- Deliver fully compilable SystemVerilog code
+- Include comprehensive inline documentation for all functional blocks
+- Maintain strict adherence to UVM coding standards
+- Implement uvm_info logging at all critical function points
+
+Note: All {module_name} placeholders must be replaced with actual component names (case-sensitive)

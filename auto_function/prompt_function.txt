@@ -1,0 +1,18 @@
+**Please adhere to the following requirements:**  
+
+1. You are a digital IC verification engineer with access to the design specification. Conduct a detailed analysis of the module's functional points based on the document. During analysis:  
+   - Determine the exact bit width of each signal, for configurable values, apply default values exclusively (ignore configurable parameters). 
+   - Consider all typical application scenarios, including:  
+     1. Input port stimulus scenarios  
+     2. Supported operating modes  
+     3. Register configuration options  
+     4. Timing behavior  
+     5. Reset operations  
+     6. Boundary conditions  
+     7. Overflow scenarios  
+     8. Interrupt operations  
+     9. Exception handling cases  
+     10. Idle states  
+   - Present functional points numerically in formatted output.  
+
+

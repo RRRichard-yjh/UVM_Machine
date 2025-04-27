@@ -1,0 +1,52 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+
+**UVM Environment Generation Requirements**
+
+1. **File Structure**:
+   - The file is part of the UVM testbench components.
+   - Class name: `{modulename}_env` (where `{modulename}` comes from `moduleName` in `module_info.json`).
+   - Must extend `uvm_env` and register with `uvm_component_utils`.
+
+2. **Required Components**:
+   - Must include: `{modulename}_agent`, `{modulename}_scoreboard`, `{modulename}_subscriber`, and `{modulename}_if`.
+   - If `{modulename}_reg_model` is provided, it must also be integrated.
+
+3. **Configuration Switches**:
+   - Check the number of `{modulename}_agent` instances to determine `ACTIVE` or `PASSIVE` mode.
+   - Check for the existence of `{modulename}_subscriber` to configure coverage.
+   - Check for the existence of `{modulename}_reg_model` to configure register model.
+
+4. **Component Naming**:
+   - Declare components as:
+     - `{modulename}_agent` -> `agent`
+     - `{modulename}_scoreboard` -> `scb`
+     - `{modulename}_subscriber` -> `cov`
+
+5. **Build Phase Requirements**:
+   - Create subcomponents and configure interfaces.
+   - Use `uvm_config_db` to:
+     - Pass virtual interface (`virtual {modulename}_if`).
+     - Verify interface retrieval with `get()` method (report `uvm_fatal` if failed).
+     - Pass virtual interface to agent using `set()`.
+   - Instantiate components using `type_id::create`:
+     - Mandatory: `agent`, `scb`, `cov`.
+     - Optional: `regmodel` (if exists).
+
+6. **Connect Phase Requirements**:
+   - Connect analysis ports:
+     - `agent.ap` -> `scb.fifo.analysis_export` (verify exact port names in respective files).
+     - `agent.ap` -> `cov.imp` (verify exact port names in respective files).
+
+7. **Code Quality Requirements**:
+   - Include clear comments for key configuration points.
+   - Comply with UVM 1.2 standards.
+   - Ensure syntax error-free implementation.
+   - Do not include code such as include "_agent.sv", include "_scoreboard.sv", or `include "_subscriber.sv".
+
+**Special Notes**:
+- If `reg_model` is not provided, comment out all related code to avoid syntax errors.
+- Maintain case sensitivity for all `{modulename}` replacements.
+- The generated file should properly integrate all specified components with correct UVM phasing.
+
+

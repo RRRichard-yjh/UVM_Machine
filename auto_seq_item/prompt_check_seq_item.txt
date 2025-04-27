@@ -1,0 +1,28 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+
+Please modify the erroneous code content in the input '{module_name}_seq_item.sv' according to the following requirements:
+
+1. {module_name}_seq_item.sv is the test file that needs to be modified, used to define transactions and related constraints. {module_name}_if.sv is the corresponding interface file. Here, {module_name} represents the DUT module name, which has been replaced during generation.
+
+2. check_errors.txt contains the errors that occurred during the compilation and simulation of this '{module_name}_seq_item.sv' file. The error content comes from the VCS simulator, including the line numbers and related modification hints.
+
+3. Please modify the relevant code in the {module_name}_seq_item.sv file based on the content of check_errors.txt and in conjunction with the interface file.
+
+4. Please note that when making modifications, do not delete the entire file content and regenerate it. Only modify the code lines related to the errors, and do not make any changes to the remaining code to avoid introducing new errors.
+
+5. After modification, please review the content in conjunction with the interface file to ensure that no signals are lost and that signal names are not arbitrarily changed.
+
+
+6. After modification, please review the complete content of '{module_name}_seq_item.sv' to ensure that no errors of the same type as those in 'check_errors.txt' are generated.
+
+7. Common error types:
+
+   a. **Syntax errors related to `inside`**:
+      Correct syntax examples: data inside {[8'd10:8'd100]};
+                               data inside {4'd2, 4'd5, 4'd7, 4'd9};
+
+8. In addition to the above error types, if other errors occur, please analyze and modify them based on the specific content in 'check_errors.txt'.
+
+9. Before outputting the code, add a line '### Corrected Code' to indicate that the specific code will follow.
+

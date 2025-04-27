@@ -1,0 +1,155 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### UVM Sequence Generation Requirements:
+
+Generate reusable UVM sequence components that synchronize with monitor events and support both random and directed verification scenarios.
+
+**Input Requirements**  
+Analyze these files to determine sequence structure:
+- `{modulename}_seq_item.sv` (transaction fields and constraints)
+- `{modulename}_monitor.sv` (synchronization events)
+- `{modulename}_function.txt` (DUT operational phases)
+- `{modulename}_testcase.txt` (specific test scenarios)
+
+**Implementation Guidelines**
+
+1. **Base Sequence Structure**
+   - Extend `uvm_sequence` with transaction type parameter
+   - Declare synchronization events from monitor
+   - Include basic transaction template with:
+     ```systemverilog
+     start_item(item);
+     // Default constraints or assignments
+     finish_item(item);
+     ```
+
+2. **Event Synchronization**
+   - Get event handles from global pool in `body()`:
+     ```systemverilog
+     event_name = uvm_event_pool::get_global("event_from_monitor");
+     ```
+   - Use `wait_trigger()` for phase synchronization
+
+3. **Transaction Generation Patterns**
+   - **Random sequences** should:
+     - Use `repeat(N)` for volume testing (N must be greater than or equal to 2500)
+     - Apply constraints from seq_item with `randomize with`
+     - Cover full input range with inside constraints
+   - **Directed sequences** should:
+     - Assign specific values to critical fields
+     - Include boundary cases (min/max values)
+     - Support multi-phase operations if required
+
+4. **Code Organization**
+   - Separate files for base/random/directed sequences
+   - Consistent naming: `{modulename}_{type}_sequence.sv`
+   - Shared event declarations in base sequence
+
+**Example Framework (Adapt to Actual DUT Requirements)**
+
+```systemverilog
+// Base sequence
+class {modulename}_base_sequence extends uvm_sequence #({modulename}_seq_item);
+    // Event declarations from monitor
+    uvm_event phase_event1, phase_event2;
+
+	//transaction declaration
+	{modulename}_seq_item seq_item;
+
+    task body();
+        // Get event handles
+        phase_event1 = uvm_event_pool::get_global("event1");
+        
+		// Default transaction pattern
+
+    endtask
+endclass
+
+// Random sequence
+class {modulename}_random_sequence extends {modulename}_base_sequence;
+    
+    //transaction declaration
+	{modulename}_seq_item seq_item;
+
+    task body();
+	    // Get event handles
+        phase_event1 = uvm_event_pool::get_global("event1");
+
+        // Randomization with constraints from seq_item
+        repeat(COUNT) begin
+		    begin
+               assert(item.randomize() with {
+                   // Field constraints, must be a valid non-zero value
+               });
+			end
+       		// Phase synchronization
+            phase_event1.wait_trigger()end
+
+        end
+    endtask 
+endclass
+
+// Directed sequence  
+class {modulename}_directed_sequence extends {modulename}_base_sequence;
+
+    //transaction declaration
+	{modulename}_seq_item seq_item;
+
+    task body();
+	    // Get event handles
+        phase_event1 = uvm_event_pool::get_global("event1");
+
+        // Specific value assignments
+        repeat(COUNT) begin
+	        begin
+               assert(item.randomize() with { 
+                   item.field = VALUE;
+               });
+			end
+            // Phase synchronization
+            phase_event1.wait_trigger();
+
+        end
+       
+	    // Boundary cases
+        repeat(COUNT) begin
+	        begin
+               assert(item.randomize() with { 
+                   item.field = MAX_VALUE;
+               });
+			end
+            // Phase synchronization
+            phase_event1.wait_trigger();
+	    end
+    endtask
+endclass
+```
+
+**Customization Points**  
+1. **Event Model**  
+   - Single-event for simple ready/valid protocols  
+   - Multi-event for complex state machines  
+
+2. **Transaction Complexity**  
+   - Flat transactions: Basic field assignments  
+   - Hierarchical: Nested sequences for protocol layers  
+
+3. **Synchronization**  
+   - Immediate execution (no waits)  
+   - Event-triggered phases  
+   - Timeout-protected waits  
+
+**Verification Objectives**  
+- [ ] Cover all operational modes from function.txt  
+- [ ] Implement test scenarios from testcase.txt  
+- [ ] Include error cases (invalid inputs)  
+- [ ] Support regression with random sequences  
+
+**Generation Instructions**  
+1. Replace `{modulename}` with actual DUT name (case-sensitive)  
+2. Map events to monitor triggers  
+3. Align transaction fields with seq_item definition  
+4. Implement constraints matching DUT specs
+5. Avoid randomization and explicit assignments for: clock signals, reset signals
+6. Generate one consolidated SystemVerilog file ({modulename}_seq.sv) incorporating the full code for: {modulename}_base_sequence, {modulename}_random_sequence, {modulename}_directed_sequence. All classes must be contained within this single file.
+

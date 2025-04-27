@@ -1,0 +1,41 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+The content of **{modulename}_agent.sv** should be filled based on **driver**, **monitor**, **sequencer**, and **interface**, where **{modulename}** is the name of the DUT file, extracted from the **moduleName** field in the **module_info.json** file. When generating the file and its content, replace all instances of **{modulename}** accordingly, paying special attention to case sensitivity. The specific generation requirements are as follows:  
+
+1. This file is part of the **UVM testbench** components. The class name should be **{modulename}_agent**, which inherits from `uvm_agent` and is registered using `uvm_component_utils`.  
+
+2. Supports **ACTIVE** (default) and **PASSIVE** modes, including the following components:  
+   - **{modulename}_sequencer**  
+   - **{modulename}_driver**  
+   - **{modulename}_monitor**  
+   - **{modulename}_if**
+
+3. The three components **{module_name}_sequencer**, **{module_name}_driver**, and **{module_name}_monitor** are declared as **sqr**, **drv**, and **mon** respectively. The **{modulename}_if** is declared as a virtual interface (vif).
+
+4. Provides a **`uvm_analysis_port`** for the monitor to broadcast data, which can be named:  
+   ```systemverilog
+   uvm_analysis_port#({modulename}_seq_item) agent_ap;
+   ```  
+
+5. In the **`build_phase`**, create sub-components and configure the interface, including:  
+   - Use **`uvm_config_db`** to pass the virtual interface (**`virtual {modulename}_if`**):  
+     - First, use **`get`** to check if the virtual interface is successfully retrieved. If it fails, report a **`uvm_fatal`** error.  
+     - Then, use **`set`** to pass the interface to both the **driver** and **monitor**.  
+   - Use **`type_id::create`** to instantiate the following three components:  
+     - **{modulename}_sequencer**  
+     - **{modulename}_driver**  
+     - **{modulename}_monitor**  
+   - Use the **`new`** method to instantiate **`agent_ap`**.  
+
+6. In the **`connect_phase`**, connect the component interfaces, including:  
+   - Use **`seq_item_port`** and **`seq_item_export`** to connect the **driver** and **sequencer**.  
+   - Connect the monitor's interface (**`ap`**) to **`agent_ap`**.  
+
+7. **Code requirements:**  
+   - Provide **clear comments** marking key configuration points.  
+   - Ensure the code complies with the **UVM 1.2** standard.  
+   - Ensure the code is **free of syntax errors**.  
+   - Do not include code such as include "_driver.sv", include "_monitor.sv", or `include "_sequencer.sv".
+
+
+*Note: Please check whether **{modulename}** in the generated code has been replaced with the actual module name.*

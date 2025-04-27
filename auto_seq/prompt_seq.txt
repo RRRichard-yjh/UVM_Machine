@@ -1,0 +1,78 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### UVM Sequence Generation Requirements: 
+
+The sequence content shall be generated based on {modulename}_seq_item.sv, {modulename}_function.txt, {modulename}_testcase.txt and specification document, where {modulename} is the name of the dut extracted from the moduleName field in module_info.json. When generating files and content, replace all {modulename} with the dut name, paying special attention to case sensitivity. The specific requirements are as follows:
+
+1. This file is part of the UVM testbench components, used to define transaction sequences that need to be generated and sent during testing. It shall contain the basic structure required by UVM.
+
+2. Generate a sufficient number of valid transactions based on the content of {modulename}_function.txt to ensure high coverage of the dut after simulation testing, and ensure the implementation comprehensively covers every functional point specified in the 'function.txt'.
+
+3. Create at least one class based on functionality, where the first class is named {modulename}_base_sequence and inherits from uvm_sequence. All other classes shall inherit from this {modulename}_base_sequence.
+
+4. Specify the transaction type in the class (which can be designated as seq_item) from the {modulename}_seq_item.sv file provided to you. Write the relevant code in the following format to avoid syntax errors:
+
+```systemverilog
+{modulename}_seq_item seq_item;
+seq_item = {modulename}_seq_item::type_id::create("seq_item");
+```
+
+However, note that statements like `include "seq_item.sv"`, `ifndef`, and `define` shall not appear.
+
+5. Use the uvm_object_utils macro to register these sequence classes to facilitate factory mechanism creation and configuration. For example: `uvm_object_utils({modulename}_base_sequence)`. Define a new() constructor that calls the parent class constructor to initialize the class instance. In the class, use the body() method to create transaction instances and use the start_item() and finish_item() methods: use start_item() to begin, and after the transaction instance is created, use finish_item() to complete it.
+
+6. {modulename}_base_sequence shall generate test transactions under basic functional conditions and must correctly manage the start and end syntax of UVM sequence items.
+
+7. Other classes that inherit from {modulename}_base_sequence shall generate multiple random test transactions and multiple typical directed-value test transactions that comply with the constraints in {modulename}_seq_item.sv, based on the functional points in {modulename}_function.txt.
+
+8. Random test transactions shall have a high number of iterations (2500 or more). Use loop structures (e.g., repeat) to control the number of transaction generations or conditions. Use randomization functions ($urandom, $urandom_range, randomize, etc.) to ensure that signals involved in the transactions are assigned random values within their corresponding bit-width ranges and constraint conditions.
+
+9. Directed Test Requirements:  
+
+   **Test Scenario Validation:**  
+   - Verify all configurations in `{modulename}_testcase.txt` against constraints in `{modulename}_seq_item.sv`.  
+   - **Only compliant configurations** shall be used for directed tests (discard non-compliant ones).  
+
+   **Additional Test Coverage:**  
+   - **Supplement with:**  
+     - Boundary value tests (min/max)  
+     - Mid-range value tests (based on bit-width)  
+     - *All derived from `{modulename}_seq_item.sv` constraints*.  
+
+   **Implementation Rules:**  
+   - Use **`randomize() with {}`** for signal assignments.  
+   - Control loops with **`repeat()`** (avoid `foreach` unless syntax safety is formally verified).  
+   - Ensure test completeness via constrained randomization.  
+
+
+10. Check against the constraints in {modulename}_seq_item.sv to ensure every assignment and randomization falls within the constraint ranges, preventing constraint-related errors.
+
+11. Note that if randomize() with {} constraint blocks are used, the following are not allowed within these blocks: $urandom, $urandom_range, if...else blocks, and begin...end blocks, as they will cause syntax errors. If there are assignment statements in randomize() with blocks, check whether these assignments conflict with each other. For example:
+
+```systemverilog
+data_i[31:9] == 23'h0;
+data_i[9] == 1'h1;
+```
+
+These two assignment statements clearly conflict. Do not allow such situations, as they will cause randomization errors.
+
+12. In test transactions, all signals in seq_item shall be assigned or randomized. Do not assign or randomize only some signals, as this will result in X-states and invalid transactions.
+
+13. This file shall not contain any class definitions related to seq_item; only sequence-related content shall be provided.
+
+14. Do not perform any operations on clock-related signals, reset-related signals, or output signals.
+
+15. Code Requirements:
+
+- Ensure all signal assignments in the code strictly adhere to the constraints defined in **{modulename}_seq_item.sv**;
+
+- Provide clear and concise comments to annotate key configuration points;
+
+- Guarantee full compliance with the UVM 1.2 standard;
+
+- Ensure the code is completely free of syntax errors;
+
+*Note:
+- Check that all {modulename} in the generated code have been replaced with the actual module name.
+
+- Verify whether the generated stimulus includes all configurations specified in {modulename}_testcase.txt. If any are missing, supplement them in the Directed-value test.

@@ -1,0 +1,87 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+
+### **UVM Sequence Item Generation Specification for {modulename}**
+
+The content of seq_item shall be generated based on:
+- Specification document ({modulename}_spec.md)  
+- Functional points ({modulename}_function.txt)
+- Interface file ({modulename}_if.sv)
+
+Requirements:
+
+1. This file is part of the UVM testbench components, used to define data packets or commands that need to be generated and transmitted during testing. It shall contain basic UVM structures.
+
+2. At the beginning of the code, add:
+   ```systemverilog
+   import uvm_pkg::*;
+   `include "uvm_macros.svh"
+   ```
+   to import UVM packages and include UVM macros.
+
+3. Create a new class named `{modulename}_seq_item` (where modulename is the module name) that extends `uvm_sequence_item`, for encapsulating data or commands to be generated and transmitted.
+
+4. Add specific fields required for transmission (e.g., address, data, command) based on inputs from:
+   - Specification documents (focus on all input/output signals)
+   - Interface files
+
+5. Identify clock and reset signals in the Specification documents or interface. When defining fields in seq_item:
+   - Declare these signals as `bit` type
+   - They must not be randomized
+   - Ensure these signals are never omitted if present
+
+6. All fields (except clock/reset) must maintain correspondence with input/output signals in the interface file for driving and conversion. Pay special attention to:
+   - Signal definitions
+   - Clocking blocks  
+   - Modports
+   - Input signals must be declared as `rand`
+   - Output signals must not be declared as `rand`
+
+7. If macros are defined in the interface file:
+   - The same macros must be defined in seq_item class
+   - If no macros exist in interface, do not add them arbitrarily (unless functionally required)
+
+8. 7. Use `uvm_object_utils_begin` to register this sequence item class, and use `uvm_field_int(..., UVM_ALL_ON)` to register its output member variables.  
+  
+   ```systemverilog 
+   `uvm_object_utils_begin({modulename}_seq_item)
+     `uvm_field_int(..., UVM_ALL_ON)  // For integer member variables
+   `uvm_object_utils_end
+   ```
+
+9. Implement the `new()` function to initialize class instances, calling the parent class constructor for proper initialization.
+
+10. Comprehensive Constraint Development
+   - Thoroughly analyze:
+     * Design specification ({modulename}_spec.md)
+     * Functional requirements ({modulename}_function.txt)
+
+   - Develop complete constraint sets including:
+     ```systemverilog
+     // Individual field constraints
+     constraint valid_addr_range {
+       addr inside {[0:ADDR_MAX]};
+     }
+     
+     // Field-to-field relationships  
+     constraint data_phase_alignment {
+       data_type == WRITE -> data_valid == 1;
+     }
+     ```
+
+   - Key Requirements:
+     * Cover all functional scenarios
+     * Prevent invalid transactions
+     * Explicitly prohibit shift operators (<<, >>) in constraints
+	 * Only apply constraints to signals declared as `rand` type (input signals)
+	 * Do not apply constraints to clock and reset signals
+
+11. Code Requirements:
+    - Ensure the code provides all necessary functional constraints without redundancy.
+    - Provide clear comments for key configuration points
+    - Comply with UVM 1.2 standards
+    - Be free of syntax errors
+
+*Note: All {modulename} placeholders must be replaced with the actual DUT module name (case-sensitive)*
+
+

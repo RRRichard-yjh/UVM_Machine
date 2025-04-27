@@ -1,0 +1,92 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### {modulename}_scoreboard.sv Generation Specifications
+
+#### 1. Input File Requirements
+- **{module_name}_monitor.sv**:
+  - Captures and transmits actual DUT outputs via actual_imp port
+  - Received transactions are stored in the scoreboard component
+
+- **{module_name}_reference_model.sv**:
+  - Reference model that transmits expected transaction outputs via expected_imp port
+  - Serves as golden reference for verification
+
+- **{module_name}_scb_example.sv**:
+  - Provides the base scoreboard framework including:
+    * Interface connections
+    * Queue write operations
+    * Reporting functions
+  - Requires implementation of check_pairs() functionality only
+
+#### 2. Core Architecture Requirements
+- Input Ports:
+  - actual_imp: Receives DUT outputs from monitor
+  - expected_imp: Receives reference model outputs
+
+- Data Storage:
+  - actual_queue: Stores DUT output transactions
+  - expected_queue: Stores reference model transactions
+
+- Core Functions:
+  - write_actual(): Processes DUT outputs
+  - write_expected(): Processes reference outputs
+  - check_pairs(): Performs transaction comparison
+
+- check_pairs() Implementation:
+  - Compares front elements when both queues are non-empty
+  - Validates all output fields (defined in {module_name}_monitor.sv)
+  - On match: Logs uvm_info and increments match_count
+  - Before performing the comparison, first check whether the actual output signal is in the X state. If it is in the X state, skip this comparison directly without generating any print messages.
+  - When handshake signals (e.g., valid and ready) are present, perform the comparison only when these signals are at their active values. If not at their active values, skip the comparison directly without generating any print messages.
+
+  - On mismatch: Logs uvm_error with debug data and increments mismatch_count
+
+- Statistics Reporting:
+  - Pass/fail rates
+  - Total transaction counts
+  - Coverage metrics
+
+#### 3. Signal Specifications
+- **{module_name}_monitor.sv**:
+  - Contains complete transaction definition including all I/O fields
+
+#### 4. Special Requirements
+- Comparison Functionality:
+  - Only compare the output signals, avoid using the 'compare' function
+  - Implement field-by-field comparison with exact mismatch identification 
+
+- Error Reporting:
+  - Complete transaction context
+  - Timestamp information
+  - Expected vs actual values
+  - Encompassing all input and output data
+
+- Configuration:
+  - Enable/disable control
+  - Debug verbosity levels
+  - Comparison strictness settings
+
+- Extensibility:
+  - Virtual methods for key functions
+  - Random test protection mechanisms
+
+#### 5. Output Requirements
+- Code Quality:
+  - Fully compilable SystemVerilog
+  - Comprehensive code comments
+  - Strict UVM coding style compliance
+
+- Logging:
+  - uvm_info for normal operations
+  - uvm_error for mismatches
+  - uvm_warning for special cases
+
+Important Notes:
+
+- Do not add any code to the fixed content in {module_name}_scb_example.sv unless specifically required
+- Only implement additions in the designated areas that need LLM supplementation
+- Do not delete any existing content from {module_name}_scb_example.sv
+- Please output the complete content based on {module_name}_scb_example.sv with the supplemental code implemented
+- All {module_name} placeholders must be replaced with actual component names (case-sensitive)
+- The file header must include: `uvm_analysis_imp_decl(_actual)
+                                `uvm_analysis_imp_decl(_expected)

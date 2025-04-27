@@ -1,0 +1,18 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+
+Please update the original {module_name}_test.sv file to properly drive transactions to the DUT using the sequence names defined in new_seq_name.txt:
+
+1. `{module_name}_test.sv` is the original test file, `{module_name}_seq.sv` is the sequence file containing the stimulus, and `new_seq_name.txt` contains the names of the additional stimulus to be added.
+
+2. `{module_name}` refers to the dut name, which can be determined from the original test file. Replace `{module_name}` accordingly when generating files and content.
+
+3. Keep the original content and format of `{module_name}_test.sv` unchanged. Add the contents of `new_seq_name.txt` into the file, including declaration, instantiation, and sending via the sequencer (`sqr`).
+
+4. The declaration code for the additional stimulus should follow the same format as in the original test file. If numbers are involved, generate them in sequential order based on the existing numbering.
+
+5. Register the new stimulus in the `build_phase`, ensuring it corresponds to the declared content and follows the format of the original test file.
+
+6. In the `run_phase`, call the sequencer (`sqr`) to send the new stimulus. The format should match that of the original test file. Additionally, locate these stimulus in `{module_name}_seq.sv`, analyze them, and provide a reasonable and high-coverage sending method.
+
+7. Ensure that the original content of `{module_name}_test.sv` remains intact without any deletions, and that all added code is free of syntax errors.
