@@ -1,0 +1,73 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### **{modulename}_add_branch_code_seq.sv Generation Specification**
+
+1. File naming: The file name should be `{modulename}_add_branch_code_seq.sv`, where `{modulename}` is the name of the dut module, please replace all {modulename} with  names when generating files and content;
+
+
+2. Input file definitions:
+   - `spec` (in `.md` format): Describes the design specifications of the module under test.
+   - `dut`: The code being tested.
+   - `{modulename}_seq_item.sv`: Defines the transaction and related constraints.
+   - `{modulename}_seq.sv`: The original stimulus.
+   - `input_signal.txt`: Lists the signals in the transaction that can be randomized.
+   - `branch_coverage.txt`: Contains branch statements in the dut code that were not triggered during simulation using the original stimulus. Unlike conditional coverage, branch coverage focuses on the true/false outcomes of each branch, while conditional coverage focuses on all possible logical combinations in conditional expressions.
+   - `seq_class_name.txt`: The class names already present in the original stimulus are not allowed to be used again in this file;
+
+3. Coverage analysis implementation:
+   - Analyze `branch_coverage.txt` by combining:
+     * Design specification
+     * DUT implementation
+     * Transaction constraints
+   - Generate new stimuli specifically targeting untriggered branch statements
+   - New stimuli must differ from original stimuli (serving as complementary coverage)
+
+4. Signal Handling Restrictions:
+   - New stimuli may only operate on signals listed in `input_signal.txt`
+   - Permitted operations:
+     * New randomization
+     * Value assignments (different from original stimuli)
+   - Strictly prohibited:
+     * Operations on signals not in `input_signal.txt`
+     * (Even if referenced in `branch_coverage.txt`)
+
+5. Implementation Requirements:
+   - Base new sequences on original `{modulename}_seq.sv` with:
+     * Identical class structure
+     * Compliance with UVM sequence component architecture
+   - All assignments must respect constraints in `{modulename}_seq_item.sv`
+
+6. Naming Convention:
+   - New class names **must not** appear in `seq_class_name.txt`
+   - Use unique names to prevent duplication errors
+
+7. Randomization Constraints:
+   Within `randomize() with {}` blocks:
+   - **Prohibited**:
+     * `$urandom`, `$urandom_range`
+     * `if...else` blocks
+     * `begin...end` blocks
+   - (These constructs cause syntax errors)
+
+8. Coverage Improvement Guidelines:
+   - New stimuli should increase triggering of branches in `branch_coverage.txt`
+   - **Critical Restriction**:
+     * Never directly assign values to branch-related signals
+     * Strictly follow Requirement 4 for proper implementation
+
+9. Code scope limitation:
+   - Only sequence-related code required
+   - Exclude:
+     * Sequence sending mechanisms
+     * seq_item related code
+
+10. Code quality requirements:
+    - Ensure all signal assignments comply with `{modulename}_seq_item.sv` constraints
+    - Provide clear comments for key configuration points
+    - Full compliance with UVM 1.2 standard
+    - Zero syntax errors
+
+*Note:
+- Check that all {modulename} in the generated code have been replaced with the actual module name.
+
+

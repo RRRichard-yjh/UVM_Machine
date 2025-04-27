@@ -1,0 +1,69 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### **{modulename}_add_toggle_code_seq.sv Generation Specification**
+
+
+1. File naming: The file name should be `{modulename}_add_toggle_code_seq.sv`, where `{modulename}` is the name of the dut module, please replace all {modulename} with  names when generating files and content;
+
+2. Input file definitions:
+   - `spec` (in `.md` format): Describes the design specifications of the module under test.
+   - `dut`: The code being tested.
+   - `{modulename}_seq_item.sv`: Defines the transaction and related constraints.
+   - `{modulename}_seq.sv`: The original stimulus.
+   - `input_signal.txt`: Lists the signals in the transaction that can be randomized.
+   - `toggle_coverage.txt`: Contains signals and registers that did not undergo 0->1 and 1->0 transitions during simulation with the original stimulus.
+   - `seq_class_name.txt`: The class names already present in the original stimulus are not allowed to be used again in this file;
+
+3. Coverage Analysis & Stimulus Generation  
+   - Analyze `toggle_coverage.txt` using:  
+     * Design specification  
+     * dut implementation  
+     * Transaction constraints  
+   - Generate new stimuli targeting untoggled signals  
+   - New stimuli must complement original sequences  
+
+4. Signal handling restrictions:
+   - New stimuli may only operate on signals listed in `input_signal.txt`
+   - Perform new randomization/assignment (with different values from original)
+   - Strictly prohibit operations on signals not in `input_signal.txt`
+   - (Even if mentioned in `toggle_coverage.txt`)
+
+5. Base requirements for new stimuli:
+   - Maintain identical class structure with `{modulename}_seq.sv`
+   - Comply with UVM sequence component architecture
+   - All assignments must respect constraints in `{modulename}_seq_item.sv`
+
+6. Naming convention:
+   - New class names must not appear in `seq_class_name.txt`
+   - Use distinct names to avoid duplication errors
+
+7. Randomization constraints:
+   - Within randomize() with {} blocks:
+     * Prohibited: $urandom, $urandom_range
+     * Prohibited: if...else blocks
+     * Prohibited: begin...end blocks
+   - (These cause syntax errors)
+
+8. **Toggle Coverage Improvement**  
+   - New stimuli shall:  
+     * Trigger 0->1 and 1->0 transitions for signals in `toggle_coverage.txt`  
+     * Improve toggle coverage metrics  
+   - **Critical**:  
+     * Never directly assign to target signals/registers  
+     * Strictly follow Requirement 4  
+
+9. Code scope limitation:
+   - Only sequence-related code required
+   - Exclude:
+     * Sequence sending mechanisms
+     * seq_item related code
+
+10. Code quality requirements:
+    - Ensure all signal assignments comply with `{modulename}_seq_item.sv` constraints
+    - Provide clear comments for key configuration points
+    - Full compliance with UVM 1.2 standard
+    - Zero syntax errors
+
+*Note:
+- Check that all {modulename} in the generated code have been replaced with the actual module name.
+

@@ -1,0 +1,82 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### **{modulename}_add_func_seq Generation Specification**
+
+1. File nameing: The file should be named `{modulename}_add_func_seq.sv`, where `{modulename}` is the name of the dut module,please replace all {modulename} with  names when generating files and content
+
+2. Input file definitions:
+   - `{modulename}_function.txt`: Lists the functional points to be verified for the module under test.
+   - `dut`: The code being tested.
+   - `{modulename}_seq_item.sv`: Defines the transaction and related constraints.
+   - `{modulename}_seq.sv`: The original stimulus.
+   - `input_signal.txt`: Lists the signals in the transaction that can be randomized.
+   - `uncover_bins.txt`: Contains coverpoints and corresponding bins not covered during simulation with the original stimulus.
+   - `{modulename}_subscriber.sv`: An SV file defining function coverage, including covergroups, coverpoints, and related bins.
+   - `seq_class_name.txt`: The class names already present in the original stimulus are not allowed to be used again in this file;
+
+3. Coverage Analysis
+   - Analyze `uncover_bins` using coverage definitions from `{modulename}_subscriber.sv`
+   - Identify:
+     * Uncovered coverpoints
+     * Corresponding bin ranges/values
+     * Any missing cross coverage
+
+4. Signal Access Restrictions
+   - New stimuli may only manipulate signals listed in `input_signal.txt`
+   - Permitted operations:
+     * New constrained randomization
+     * Value assignments (different from original stimulus values)
+   - Strictly prohibited:
+     * Operations on signals not included in `input_signal.txt`
+     * (Even if referenced in `uncover_bins`)
+
+5. Implementation Rules
+   - Base implementation on original sequences (`{modulename}_seq.sv`):
+     * Maintain identical class structure
+     * Full compliance with UVM sequence component architecture
+   - All assignments must respect constraints defined in `{modulename}_seq_item.sv`
+
+6. Naming Convention
+   - New class names must:
+     * Be distinct from all names in `seq_class_name.txt`
+     * Avoid any naming conflicts
+     * Follow consistent naming patterns
+
+7. Coverage Completion Requirements
+   - Ensure comprehensive coverage of all previously uncovered bins:
+     * Preferred method: Individual assignment per bin
+     * Alternative method: Multiple randomization cycles
+       - Minimum 10 cycles per bin group
+       - Additional 50 cycles per extra bin group
+       (Example: 3 bin groups -> minimum 100 cycles)
+   - Strictly avoid single randomization covering multiple bins
+   - Post-simulation target: 100% functional coverage
+
+8. Randomization constraints:
+   - Within randomize() with {} blocks:
+     * Prohibited: $urandom, $urandom_range
+     * Prohibited: if...else blocks
+     * Prohibited: begin...end blocks
+   - (These cause syntax errors)
+
+9. Cross Coverage Priority
+   - Special focus on uncovered "cross" coverage scenarios
+   - Implement dedicated sequences specifically for:
+     * Each uncovered cross coverage case
+     * Complex coverage intersections
+
+10. Code scope limitation:
+   - Only sequence-related code required
+   - Exclude:
+     * Sequence sending mechanisms
+     * seq_item related code
+
+11. Code quality requirements:
+    - Ensure all signal assignments comply with `{modulename}_seq_item.sv` constraints
+    - Provide clear comments for key configuration points
+    - Full compliance with UVM 1.2 standard
+    - Zero syntax errors
+
+*Note:
+- Check that all {modulename} in the generated code have been replaced with the actual module name.
+

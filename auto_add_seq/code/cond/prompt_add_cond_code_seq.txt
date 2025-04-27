@@ -1,0 +1,79 @@
+You are an IC verification engineer and you need to use UVM to build a tesebench.
+
+### **{modulename}_add_cond_code_seq.sv Generation Specification**
+
+1. File naming: The file name should be `{modulename}_add_cond_code_seq.sv`, where `{modulename}` is the name of the dut module, please replace all {modulename} with  names when generating files and content;
+
+2. Input file definitions:
+   - `spec` (in `.md` format): Describes the design specifications of the module under test.
+   - `dut`: The code being tested.
+   - `{modulename}_seq_item.sv`: Defines the transaction and related constraints.
+   - `{modulename}_seq.sv`: The original stimulus.
+   - `input_signal.txt`: Lists the signals in the transaction that can be randomized.
+   - `seq_class_name.txt`: The class names already present in the original stimulus are not allowed to be used again in this file;
+   - `conditional_coverage.txt`: Contains all possible logical combinations of conditional statements in the dut code that were not triggered during simulation using the original stimulus.
+
+   **Example for `conditional_coverage.txt`**:
+   ```
+   - LINE       245
+     EXPRESSION ((ca[3] == ra[0]) ? comp_data[7:0] : comp_data_inv[7:0])
+                 --------1-------
+   - -1-Status0Not Covered1Not Covered
+   ```
+
+   Explanation: In line 245, the branch where the condition is true (`ca[3] == ra[0]` is true) is not covered; the branch where the condition is false (`ca[3] == ra[0]` is false) is also not covered.
+
+3. Coverage Analysis  
+   - Analyze `conditional_coverage.txt` using:  
+     * Design specification  
+     * dut implementation  
+     * Transaction constraints  
+   - Generate new stimuli targeting uncovered logical combinations  
+   - New stimuli must complement original sequences  
+
+4. Signal handling restrictions:
+   - New stimuli may only operate on signals listed in `input_signal.txt`
+   - Perform new randomization/assignment (with different values from original)
+   - Strictly prohibit operations on signals not in `input_signal.txt`
+   - (Even if mentioned in `conditional_coverage.txt`)
+
+5. Base requirements for new stimuli:
+   - Maintain identical class structure with `{modulename}_seq.sv`
+   - Comply with UVM sequence component architecture
+   - All assignments must respect constraints in `{modulename}_seq_item.sv`
+
+6. Naming convention:
+   - New class names must not appear in `seq_class_name.txt`
+   - Use distinct names to avoid duplication errors
+
+7. Randomization constraints:
+   - Within randomize() with {} blocks:
+     * Prohibited: $urandom, $urandom_range
+     * Prohibited: if...else blocks
+     * Prohibited: begin...end blocks
+   - (These cause syntax errors)
+
+8. Coverage Improvement  
+   - New stimuli shall:  
+     * Trigger uncovered conditional combinations  
+     * Improve conditional coverage metrics  
+   - **Critical**:  
+     * Never directly assign to conditional signals  
+     * Strictly follow Requirement 4  
+
+9. Code scope limitation:
+   - Only sequence-related code required
+   - Exclude:
+     * Sequence sending mechanisms
+     * seq_item related code
+
+10. Code quality requirements:
+    - Ensure all signal assignments comply with `{modulename}_seq_item.sv` constraints
+    - Provide clear comments for key configuration points
+    - Full compliance with UVM 1.2 standard
+    - Zero syntax errors
+
+*Note:
+- Check that all {modulename} in the generated code have been replaced with the actual module name.
+
+
