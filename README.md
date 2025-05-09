@@ -1,6 +1,6 @@
 # UVM_Machine  
 
-This repository provides a framework for generating UVM testbenches using Large Language Models (LLM). It streamlines the process of creating testbenches and enhancing test stimuli through modular scripts and configuration - driven workflows.  
+This repository provides a framework for generating UVM testbenches using Large Language Models (LLM). It streamlines the process of creating testbenches and enhancing test stimuli through templates and configuration - driven workflows.  
 
 ## Key Components  
 1. **API for LLM Interaction**  
