@@ -36,6 +36,6 @@ This repository provides a framework for generating UVM testbenches using Large 
    ```bash
    /initial_tb.sh
 
-   - Step 2: Enhance test stimuli
+- Step 2: Enhance test stimuli
    ```bash
    ./increase_seq.sh
