@@ -26,16 +26,16 @@ This repository provides a framework for generating UVM testbenches using Large 
    cd <repository - directory>
    
 2. **Confige API Key**
- - Add your LLM API key to the appropriate location in the scripts (details in the component generation files).
+    - Add your LLM API key to the appropriate location in the scripts (details in the component generation files).
 
 3. **Set Up RTL Configuration**
- - Edit `module_info. json` to include the path and details of the RTL code you want to test.
+    - Edit `module_info. json` to include the path and details of the RTL code you want to test.
 
 4. **Run the Framework**
    - Step 1: Generate the initial testbench
-   ```bash
-   /initial_tb.sh
+     ```bash
+      ./initial_tb.sh
 
-- Step 2: Enhance test stimuli
-   ```bash
-   ./increase_seq.sh
+   - Step 2: Enhance test stimuli
+      ```bash
+      ./increase_seq.sh
