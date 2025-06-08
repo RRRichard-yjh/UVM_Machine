@@ -6,7 +6,7 @@ module AES_Encrypt_Top();
     // Interface instantiation
     AES_Encrypt_if ifc();
     
-    // DUT instantiation（使用test_module）
+    // DUT instantiation
     AES_Encrypt #(128,10,4) dut (
         .in(ifc.in),
         .key(ifc.key),
@@ -25,7 +25,7 @@ module AES_Encrypt_Top();
     // UVM configuration
     initial begin
         uvm_config_db#(virtual AES_Encrypt_if)::set(null, "uvm_test_top", "vif", ifc);
-        run_test("AES_Encrypt_test");  // 测试用例名使用module_name
+        run_test("AES_Encrypt_test");
     end
 
     // Waveform recording
