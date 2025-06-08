@@ -6,7 +6,7 @@ module ALU_Top();
     // Interface instantiation
     ALU_if ifc();
     
-    // DUT instantiation（使用test_module）
+    // DUT instantiation
     ALU  dut (
         .a_operand(ifc.a_operand),
         .b_operand(ifc.b_operand),
@@ -29,7 +29,7 @@ module ALU_Top();
     // UVM configuration
     initial begin
         uvm_config_db#(virtual ALU_if)::set(null, "uvm_test_top", "vif", ifc);
-        run_test("ALU_test");  // 测试用例名使用module_name
+        run_test("ALU_test");  
     end
 
     // Waveform recording
