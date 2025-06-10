@@ -1,11 +1,3 @@
-/*######################################################################*\
-## Class Name: ALU_subscriber   
-## Author : qh
-## Date: Feb 2025
-## 
-\*######################################################################*/
-
-
 
 class ALU_subscriber extends uvm_subscriber #(ALU_seq_item);
     `uvm_component_utils(ALU_subscriber)
