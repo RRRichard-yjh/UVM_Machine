@@ -1,0 +1,16 @@
+{
+  "modules": [
+    {
+      "moduleName": "",
+      "topModule": "",
+      "reset_level": "",
+      "paths": {
+        "dut": "./module/{moduleName}/rtl/{moduleName}.v",
+        "spec": "./module/{moduleName}/rtl/{moduleName}_spec.md",
+        "uvm_testbench": "./module/{moduleName}/testbench",
+        "sim": "./module/{moduleName}/sim"
+      }
+    }
+  ]
+}
+
